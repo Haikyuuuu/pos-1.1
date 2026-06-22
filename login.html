@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+
+<style>
+/* ================= BASE ================= */
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:'Segoe UI', Arial, sans-serif;
+  background:#f2e9da;
+  position:relative;
+  overflow:hidden;
+}
+
+/* BACKGROUND TEXTURE */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(176,141,87,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(176,141,87,0.05) 0%, transparent 50%);
+  pointer-events:none;
+}
+
+/* ================= CARD ================= */
+.login-wrap{
+  width:100%;
+  max-width:400px;
+  padding:24px;
+  position:relative;
+  z-index:1;
+}
+
+.login-box{
+  background:#ffffff;
+  border-top:3px solid #b08d57;
+  padding:44px 40px 40px;
+  box-shadow:0 8px 40px rgba(176,141,87,0.12), 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* ================= BRAND ================= */
+.brand{
+  text-align:center;
+  margin-bottom:36px;
+}
+
+.brand-logo{
+  display:inline-block;
+  width:48px;
+  height:48px;
+  border:2px solid #d9c9a3;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 16px;
+  font-size:20px;
+  color:#b08d57;
+}
+
+.brand h1{
+  font-family:'Georgia', serif;
+  font-size:22px;
+  font-weight:400;
+  color:#3e362b;
+  letter-spacing:1.5px;
+}
+
+.brand p{
+  font-size:11.5px;
+  color:#a89a7d;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  margin-top:6px;
+}
+
+/* ================= DIVIDER ================= */
+.divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:28px;
+}
+
+.divider::before,
+.divider::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:#ece2cc;
+}
+
+.divider span{
+  font-size:10px;
+  color:#c9bc9e;
+  letter-spacing:0.5px;
+}
+
+/* ================= FIELD ================= */
+.field{
+  margin-bottom:18px;
+}
+
+.field label{
+  display:block;
+  font-size:10.5px;
+  color:#a89a7d;
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+  margin-bottom:7px;
+}
+
+.field input{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid #e3d6b8;
+  background:#faf5ea;
+  color:#3e362b;
+  font-size:13.5px;
+  font-family:'Segoe UI', Arial, sans-serif;
+  outline:none;
+  transition:border-color 0.2s;
+}
+
+.field input:focus{
+  border-color:#b08d57;
+  background:#ffffff;
+}
+
+.field input::placeholder{
+  color:#c9bc9e;
+}
+
+/* ================= ERROR ================= */
+.error-msg{
+  font-size:12px;
+  color:#b06a5a;
+  letter-spacing:0.3px;
+  margin-bottom:16px;
+  min-height:18px;
+  text-align:center;
+  opacity:0;
+  transition:opacity 0.2s;
+}
+
+.error-msg.show{
+  opacity:1;
+}
+
+/* ================= BUTTON ================= */
+.btn-login{
+  width:100%;
+  padding:13px;
+  background:#3e362b;
+  border:none;
+  color:#f2e9da;
+  font-family:'Segoe UI', Arial, sans-serif;
+  font-size:12px;
+  letter-spacing:1.8px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:0.25s;
+  margin-top:4px;
+}
+
+.btn-login:hover{
+  background:#b08d57;
+  color:#ffffff;
+}
+
+.btn-login:active{
+  transform:scale(0.99);
+}
+
+/* ================= FOOTER ================= */
+.login-footer{
+  text-align:center;
+  margin-top:24px;
+  font-size:11px;
+  color:#c9bc9e;
+  letter-spacing:0.3px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="login-wrap">
+  <div class="login-box">
+
+    <div class="brand">
+      <div class="brand-logo">✦</div>
+      <h1 id="storeTitle">POS System</h1>
+      <p>Point of Sale</p>
+    </div>
+
+    <div class="divider"><span>Log Masuk</span></div>
+
+    <div class="field">
+      <label>Username</label>
+      <input id="u" type="text" placeholder="Masukkan username" autocomplete="username">
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <input id="p" type="password" placeholder="Masukkan password" autocomplete="current-password">
+    </div>
+
+    <div class="error-msg" id="errMsg">Username atau password tidak betul.</div>
+
+    <button class="btn-login" onclick="login()">Masuk</button>
+
+  </div>
+
+  <div class="login-footer" id="storeFooter">—</div>
+</div>
+
+<script>
+
+/* PAPAR NAMA KEDAI DARI SETTINGS */
+window.onload = function(){
+  const storeName = localStorage.getItem("storeName");
+  if(storeName){
+    document.getElementById("storeTitle").innerText = storeName;
+  }
+
+  const storePhone = localStorage.getItem("storePhone");
+  const storeAddress = localStorage.getItem("storeAddress");
+  const parts = [storePhone, storeAddress].filter(Boolean);
+  if(parts.length){
+    document.getElementById("storeFooter").innerText = parts.join("  ·  ");
+  }
+
+  /* KALAU DAH LOGIN, REDIRECT TERUS */
+  if(localStorage.getItem("loggedIn") === "true"){
+    window.location.href = "index.html";
+  }
+
+  /* ENTER KEY TO LOGIN */
+  document.addEventListener("keydown", e => {
+    if(e.key === "Enter") login();
+  });
+};
+
+/* LOGIN */
+function login(){
+  const u = document.getElementById("u").value.trim();
+  const p = document.getElementById("p").value;
+  const errMsg = document.getElementById("errMsg");
+
+  errMsg.classList.remove("show");
+
+  if(!u || !p){
+    errMsg.textContent = "Sila isi username dan password.";
+    errMsg.classList.add("show");
+    return;
+  }
+
+  /* SEMAK CREDENTIALS */
+  const savedUser = localStorage.getItem("username");
+  const savedPass = localStorage.getItem("password");
+
+  /* FIRST TIME LOGIN — tiada akaun lagi */
+  if(!savedUser && !savedPass){
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("username", u);
+    window.location.href = "index.html";
+    return;
+  }
+
+  /* VALIDATE */
+  const userMatch = !savedUser || u.toLowerCase() === savedUser.toLowerCase();
+  const passMatch = !savedPass || p === savedPass;
+
+  if(userMatch && passMatch){
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("username", u);
+    window.location.href = "index.html";
+  } else {
+    errMsg.textContent = "Username atau password tidak betul.";
+    errMsg.classList.add("show");
+    document.getElementById("p").value = "";
+    document.getElementById("p").focus();
+  }
+}
+
+</script>
+
+</body>
+</html>

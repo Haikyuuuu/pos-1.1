@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports</title>
+
+<style>
+/* ================= BASE ================= */
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Georgia', 'Times New Roman', serif;
+  background:#f7f1e6;
+  color:#3e362b;
+  font-size:14px;
+}
+
+/* ================= HEADER ================= */
+header{
+  background:#f2e9da;
+  color:#b08d57;
+  padding:20px 32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid #e8dcc4;
+}
+
+.header-left{
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+
+header h3{
+  font-weight:400;
+  letter-spacing:2.5px;
+  font-size:16px;
+  text-transform:uppercase;
+  color:#3e362b;
+  margin:0;
+}
+
+.header-right{
+  display:flex;
+  gap:22px;
+  align-items:center;
+  font-size:12.5px;
+  letter-spacing:0.4px;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+#clock{
+  opacity:0.55;
+  color:#9c8f78;
+}
+
+.logout-btn{
+  background:transparent;
+  border:1px solid #d4c4a0;
+  color:#b08d57;
+  padding:6px 16px;
+  cursor:pointer;
+  font-size:11px;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  font-family:'Segoe UI', Arial, sans-serif;
+  transition:0.25s;
+}
+
+.logout-btn:hover{
+  background:#b08d57;
+  border-color:#b08d57;
+  color:#fff9f0;
+}
+
+/* ================= LAYOUT ================= */
+.container{
+  display:flex;
+  min-height:calc(100vh - 76px);
+  position:relative;
+  background:#f2e9da;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar{
+  width:230px;
+  background:#f2e9da;
+  color:#8a7c63;
+  padding:28px 0;
+  transition:0.25s;
+  flex-shrink:0;
+  border-right:1px solid #ece2cc;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+.sidebar.hide{
+  width:0;
+  padding:0;
+  overflow:hidden;
+}
+
+.sidebar div{
+  padding:13px 28px;
+  margin:0;
+  background:transparent;
+  cursor:pointer;
+  font-size:12px;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  border-left:2px solid transparent;
+  transition:0.2s;
+}
+
+.sidebar div:hover{
+  background:#e8dcc0;
+  color:#9c6b3f;
+}
+
+.sidebar div.active{
+  background:#e8dcc0;
+  border-left-color:#9c6b3f;
+  color:#9c6b3f;
+}
+
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  z-index:90;
+}
+
+.overlay.show{
+  display:block;
+}
+
+/* ================= CONTENT ================= */
+.content{
+  flex:1;
+  padding:36px 40px;
+  min-width:0;
+}
+
+.content > h2{
+  margin:0 0 28px 0;
+  font-size:19px;
+  font-weight:400;
+  color:#3e362b;
+  letter-spacing:1px;
+  font-family:'Georgia', serif;
+}
+
+/* ================= CARD ================= */
+.card{
+  background:#ffffff;
+  padding:26px 28px;
+  margin-bottom:30px;
+  border-top:2px solid #d9c9a3;
+}
+
+.card h3{
+  margin:0 0 18px 0;
+  font-size:11px;
+  color:#a89a7d;
+  text-transform:uppercase;
+  letter-spacing:1.6px;
+  font-weight:400;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+.form-row{
+  display:grid;
+  grid-template-columns:2fr 1fr auto;
+  gap:14px;
+  align-items:end;
+}
+
+.field label{
+  display:block;
+  font-size:10.5px;
+  color:#a89a7d;
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+  margin-bottom:6px;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+/* ================= INPUT ================= */
+input{
+  width:100%;
+  padding:11px 12px;
+  margin:0;
+  border:1px solid #e3d6b8;
+  background:#f7f1e6;
+  color:#3e362b;
+  font-family:'Segoe UI', Arial, sans-serif;
+  font-size:13.5px;
+}
+
+input:focus{
+  outline:none;
+  border-color:#b08d57;
+}
+
+input::placeholder{
+  color:#bfb194;
+}
+
+/* ================= BUTTON ================= */
+button{
+  padding:11px 22px;
+  background:transparent;
+  border:1px solid #b08d57;
+  color:#b08d57;
+  cursor:pointer;
+  font-family:'Segoe UI', Arial, sans-serif;
+  font-size:11.5px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  transition:0.2s;
+  white-space:nowrap;
+}
+
+button:hover{
+  background:#b08d57;
+  color:#fffdf8;
+}
+
+/* ================= SEARCH ================= */
+.search-row{
+  margin-bottom:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+}
+
+.search-row input{
+  max-width:320px;
+}
+
+.product-count{
+  color:#a89a7d;
+  font-size:12px;
+  letter-spacing:0.5px;
+  font-family:'Segoe UI', Arial, sans-serif;
+  white-space:nowrap;
+}
+
+/* ================= TABLE ================= */
+.table-wrap{
+  background:#ffffff;
+  border-top:2px solid #d9c9a3;
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  background:transparent;
+  border-collapse:collapse;
+  margin-top:0;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+th,td{
+  padding:14px 16px;
+  border-bottom:1px solid #ece2cc;
+  text-align:left;
+}
+
+th{
+  color:#a89a7d;
+  font-weight:400;
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+}
+
+td{
+  color:#4a4133;
+  font-size:13.5px;
+}
+
+tbody tr:hover td{
+  background:#faf5ea;
+}
+
+td.low-stock{
+  color:#c2823f;
+}
+
+td.out-stock{
+  color:#c25f4f;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+}
+
+.actions button{
+  margin-right:0;
+  padding:7px 14px;
+  font-size:10.5px;
+}
+
+.actions .edit-btn{
+  border-color:#a89a7d;
+  color:#9c8f78;
+}
+
+.actions .edit-btn:hover{
+  background:#a89a7d;
+  color:#fffdf8;
+}
+
+.actions .delete{
+  border-color:#b06a5a;
+  color:#c98f7f;
+}
+
+.actions .delete:hover{
+  background:#b06a5a;
+  color:#fff;
+}
+
+.empty-row td{
+  text-align:center;
+  color:#a89a7d;
+  padding:36px;
+}
+
+/* ================= STATS GRID ================= */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+  gap:1px;
+  margin-bottom:36px;
+  background:#ece2cc;
+  border:1px solid #ece2cc;
+}
+
+.stat-card{
+  background:#ffffff;
+  padding:24px 22px;
+  border-top:2px solid #d9c9a3;
+  box-shadow:0 2px 10px rgba(176,141,87,0.08);
+}
+
+.stat-card.warning{ border-top-color:#c19a55; }
+.stat-card.danger{ border-top-color:#b06a5a; }
+.stat-card.success{ border-top-color:#7a9b6e; }
+
+.stat-card h3{
+  margin:0;
+  font-size:11px;
+  color:#a89a7d;
+  text-transform:uppercase;
+  letter-spacing:1.6px;
+  font-weight:400;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+.stat-card p{
+  font-size:28px;
+  font-weight:400;
+  margin-top:12px;
+  color:#3e362b;
+  font-family:'Georgia', serif;
+}
+
+/* ================= REPORT PANEL ================= */
+.panel{
+  background:#ffffff;
+  border-top:2px solid #d9c9a3;
+  padding:24px 26px;
+  margin-bottom:24px;
+  box-shadow:0 2px 10px rgba(176,141,87,0.08);
+}
+
+.panel h3{
+  margin-top:0;
+  margin-bottom:16px;
+  font-size:11px;
+  color:#a89a7d;
+  text-transform:uppercase;
+  letter-spacing:1.6px;
+  font-weight:400;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+.panel-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+
+@media (max-width:768px){
+  .panel-row{
+    grid-template-columns:1fr;
+  }
+}
+
+.empty-state{
+  text-align:center;
+  color:#a89a7d;
+  padding:28px;
+  font-size:13px;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+.report-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:11px 0;
+  border-bottom:1px solid #ece2cc;
+  font-family:'Segoe UI', Arial, sans-serif;
+  font-size:13.5px;
+}
+
+.report-item:last-child{
+  border-bottom:none;
+}
+
+.report-item .item-name{
+  color:#3e362b;
+}
+
+.report-item .item-value{
+  font-weight:600;
+}
+
+.report-item .item-value.low{
+  color:#c2823f;
+}
+
+.report-item .item-value.out{
+  color:#c25f4f;
+}
+
+.report-item .item-value.value{
+  color:#7a9b6e;
+}
+
+/* QUICK ADJUST */
+.qty-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.qty-actions button{
+  padding:6px 12px;
+  font-size:13px;
+  min-width:36px;
+}
+
+.qty-actions .minus{
+  border-color:#b06a5a;
+  color:#b06a5a;
+}
+
+.qty-actions .minus:hover{
+  background:#b06a5a;
+  color:#fff9f0;
+}
+
+.stock-badge{
+  display:inline-block;
+  padding:3px 10px;
+  font-size:12px;
+  font-family:'Segoe UI', Arial, sans-serif;
+  letter-spacing:0.3px;
+}
+
+.stock-badge.ok{
+  color:#7a9b6e;
+}
+
+.stock-badge.low{
+  color:#c2823f;
+  font-weight:600;
+}
+
+.stock-badge.out{
+  color:#c25f4f;
+  font-weight:600;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width:768px){
+  .sidebar{
+    position:fixed;
+    top:65px;
+    left:0;
+    bottom:0;
+    z-index:95;
+    width:230px;
+    transform:translateX(-100%);
+  }
+  .sidebar:not(.hide){
+    transform:translateX(0);
+  }
+  .sidebar.hide{
+    width:230px;
+    padding:28px 0;
+    transform:translateX(-100%);
+  }
+  #clock{ display:none; }
+  .form-row{
+    grid-template-columns:1fr;
+  }
+  .content{
+    padding:24px 18px;
+  }
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="header-left">
+    <div onclick="toggleSidebar()" style="cursor:pointer;font-size:20px;color:#b08d57;">☰</div>
+    <h3>Reports</h3>
+  </div>
+
+  <div class="header-right">
+    <span id="clock"></span>
+    <span>User: <span id="user" style="color:#b08d57;"></span></span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar hide" id="sidebar">
+
+  <div onclick="go('index')" data-page="index">Dashboard</div>
+  <div onclick="go('products')" data-page="products">Products</div>
+  <div onclick="go('categories')" data-page="categories">Categories</div>
+  <div onclick="go('stock')" data-page="stock">Stock</div>
+  <div onclick="go('reports')" data-page="reports">Reports</div>
+  <div onclick="go('settings')" data-page="settings">Settings</div>
+
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <h2>Reports Overview</h2>
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <h3>Total Products</h3>
+      <p id="tp">0</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>Total Stock Units</h3>
+      <p id="ts">0</p>
+    </div>
+
+    <div class="stat-card warning">
+      <h3>Low Stock Items</h3>
+      <p id="ls">0</p>
+    </div>
+
+    <div class="stat-card danger">
+      <h3>Out of Stock</h3>
+      <p id="os">0</p>
+    </div>
+
+    <div class="stat-card success">
+      <h3>Total Inventory Value</h3>
+      <p id="iv">RM 0.00</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>Total Categories</h3>
+      <p id="tc">0</p>
+    </div>
+
+  </div>
+
+  <div class="panel-row">
+
+    <div class="panel">
+      <h3>Stok Rendah / Habis</h3>
+      <div id="lowStockList">
+        <div class="empty-state">Tiada item perlu perhatian.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Produk Paling Bernilai</h3>
+      <div id="topValueList">
+        <div class="empty-state">Tiada data produk.</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* LOGIN CHECK */
+if(localStorage.getItem("loggedIn") !== "true"){
+  window.location.href = "login.html";
+}
+
+/* SIDEBAR */
+function toggleSidebar(){
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  sidebar.classList.toggle("hide");
+  overlay.classList.toggle("show", !sidebar.classList.contains("hide") && window.innerWidth <= 768);
+}
+
+function go(page){
+  location.href = page + ".html";
+}
+
+/* MENU AKTIF */
+function setActiveMenu(){
+  const current = (location.pathname.split("/").pop() || "index.html").replace(".html","");
+  document.querySelectorAll(".sidebar div").forEach(item=>{
+    item.classList.toggle("active", item.dataset.page === current);
+  });
+}
+
+/* USER */
+function loadUser(){
+  document.getElementById("user").innerText =
+    localStorage.getItem("username") || "User";
+}
+
+/* LOGOUT */
+function logout(){
+  if(confirm("Adakah anda pasti mahu log keluar?")){
+    localStorage.removeItem("loggedIn");
+    window.location.href = "login.html";
+  }
+}
+
+/* JAM REAL-TIME */
+function updateClock(){
+  const now = new Date();
+  const options = { weekday:'short', day:'2-digit', month:'short', year:'numeric' };
+  const dateStr = now.toLocaleDateString('ms-MY', options);
+  const timeStr = now.toLocaleTimeString('ms-MY', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  document.getElementById("clock").innerText = `${dateStr}, ${timeStr}`;
+}
+
+/* DATA */
+let products = [];
+let categories = [];
+
+try{
+  products = JSON.parse(localStorage.getItem("products")) || [];
+}catch(e){
+  console.error("Data produk rosak:", e);
+  products = [];
+}
+
+try{
+  categories = JSON.parse(localStorage.getItem("categories")) || [];
+}catch(e){
+  console.error("Data kategori rosak:", e);
+  categories = [];
+}
+
+/* JANA LAPORAN */
+function loadReports(){
+  let totalStock = 0;
+  let lowStock = 0;
+  let outStock = 0;
+  let inventoryValue = 0;
+
+  products.forEach(p=>{
+    let stock = parseInt(p.stock) || 0;
+    let price = parseFloat(p.price) || 0;
+
+    totalStock += stock;
+    inventoryValue += stock * price;
+
+    if(stock === 0) outStock++;
+    else if(stock < 5) lowStock++;
+  });
+
+  document.getElementById("tp").innerText = products.length;
+  document.getElementById("ts").innerText = totalStock;
+  document.getElementById("ls").innerText = lowStock;
+  document.getElementById("os").innerText = outStock;
+  document.getElementById("iv").innerText = "RM " + inventoryValue.toFixed(2);
+  document.getElementById("tc").innerText = categories.length;
+
+  renderLowStockList();
+  renderTopValueList();
+}
+
+/* SENARAI STOK RENDAH / HABIS */
+function renderLowStockList(){
+  const container = document.getElementById("lowStockList");
+
+  let attention = products
+    .filter(p => (parseInt(p.stock) || 0) < 5)
+    .sort((a,b) => (parseInt(a.stock)||0) - (parseInt(b.stock)||0));
+
+  if(!attention.length){
+    container.innerHTML = '<div class="empty-state">Tiada item perlu perhatian.</div>';
+    return;
+  }
+
+  container.innerHTML = attention.map(p=>{
+    let stock = parseInt(p.stock) || 0;
+    let cls = stock === 0 ? "out" : "low";
+    let label = stock === 0 ? "Habis" : stock + " unit";
+
+    return `
+      <div class="report-item">
+        <span class="item-name">${p.name}</span>
+        <span class="item-value ${cls}">${label}</span>
+      </div>
+    `;
+  }).join("");
+}
+
+/* SENARAI PRODUK PALING BERNILAI */
+function renderTopValueList(){
+  const container = document.getElementById("topValueList");
+
+  if(!products.length){
+    container.innerHTML = '<div class="empty-state">Tiada data produk.</div>';
+    return;
+  }
+
+  let ranked = [...products]
+    .map(p => ({
+      name: p.name,
+      total: (parseInt(p.stock) || 0) * (parseFloat(p.price) || 0)
+    }))
+    .sort((a,b) => b.total - a.total)
+    .slice(0, 8);
+
+  container.innerHTML = ranked.map(p => `
+    <div class="report-item">
+      <span class="item-name">${p.name}</span>
+      <span class="item-value value">RM ${p.total.toFixed(2)}</span>
+    </div>
+  `).join("");
+}
+
+/* INIT */
+window.onload = function(){
+  loadUser();
+  setActiveMenu();
+  updateClock();
+  setInterval(updateClock, 1000);
+  loadReports();
+};
+  if(window.innerWidth > 768){
+    document.getElementById("overlay").classList.remove("show");
+  }
+;
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock</title>
+
+<style>
+/* ================= BASE ================= */
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Georgia', 'Times New Roman', serif;
+  background:#f7f1e6;
+  color:#3e362b;
+  font-size:14px;
+}
+
+/* ================= HEADER ================= */
+header{
+  background:#f2e9da;
+  color:#b08d57;
+  padding:20px 32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid #e8dcc4;
+}
+
+.header-left{
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+
+header h3{
+  font-weight:400;
+  letter-spacing:2.5px;
+  font-size:16px;
+  text-transform:uppercase;
+  color:#3e362b;
+  margin:0;
+}
+
+.header-right{
+  display:flex;
+  gap:22px;
+  align-items:center;
+  font-size:12.5px;
+  letter-spacing:0.4px;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+#clock{
+  opacity:0.55;
+  color:#9c8f78;
+}
+
+.logout-btn{
+  background:transparent;
+  border:1px solid #d4c4a0;
+  color:#b08d57;
+  padding:6px 16px;
+  cursor:pointer;
+  font-size:11px;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  font-family:'Segoe UI', Arial, sans-serif;
+  transition:0.25s;
+}
+
+.logout-btn:hover{
+  background:#b08d57;
+  border-color:#b08d57;
+  color:#fff9f0;
+}
+
+/* ================= LAYOUT ================= */
+.container{
+  display:flex;
+  min-height:calc(100vh - 76px);
+  position:relative;
+  background:#f2e9da;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar{
+  width:230px;
+  background:#f2e9da;
+  color:#8a7c63;
+  padding:28px 0;
+  transition:0.25s;
+  flex-shrink:0;
+  border-right:1px solid #ece2cc;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+.sidebar.hide{
+  width:0;
+  padding:0;
+  overflow:hidden;
+}
+
+.sidebar div{
+  padding:13px 28px;
+  margin:0;
+  background:transparent;
+  cursor:pointer;
+  font-size:12px;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  border-left:2px solid transparent;
+  transition:0.2s;
+}
+
+.sidebar div:hover{
+  background:#e8dcc0;
+  color:#9c6b3f;
+}
+
+.sidebar div.active{
+  background:#e8dcc0;
+  border-left-color:#9c6b3f;
+  color:#9c6b3f;
+}
+
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  z-index:90;
+}
+
+.overlay.show{
+  display:block;
+}
+
+/* ================= CONTENT ================= */
+.content{
+  flex:1;
+  padding:36px 40px;
+  min-width:0;
+}
+
+.content > h2{
+  margin:0 0 28px 0;
+  font-size:19px;
+  font-weight:400;
+  color:#3e362b;
+  letter-spacing:1px;
+  font-family:'Georgia', serif;
+}
+
+/* ================= CARD ================= */
+.card{
+  background:#ffffff;
+  padding:26px 28px;
+  margin-bottom:30px;
+  border-top:2px solid #d9c9a3;
+}
+
+.card h3{
+  margin:0 0 18px 0;
+  font-size:11px;
+  color:#a89a7d;
+  text-transform:uppercase;
+  letter-spacing:1.6px;
+  font-weight:400;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+.form-row{
+  display:grid;
+  grid-template-columns:2fr 1fr auto;
+  gap:14px;
+  align-items:end;
+}
+
+.field label{
+  display:block;
+  font-size:10.5px;
+  color:#a89a7d;
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+  margin-bottom:6px;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+/* ================= INPUT ================= */
+input{
+  width:100%;
+  padding:11px 12px;
+  margin:0;
+  border:1px solid #e3d6b8;
+  background:#f7f1e6;
+  color:#3e362b;
+  font-family:'Segoe UI', Arial, sans-serif;
+  font-size:13.5px;
+}
+
+input:focus{
+  outline:none;
+  border-color:#b08d57;
+}
+
+input::placeholder{
+  color:#bfb194;
+}
+
+/* ================= BUTTON ================= */
+button{
+  padding:11px 22px;
+  background:transparent;
+  border:1px solid #b08d57;
+  color:#b08d57;
+  cursor:pointer;
+  font-family:'Segoe UI', Arial, sans-serif;
+  font-size:11.5px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  transition:0.2s;
+  white-space:nowrap;
+}
+
+button:hover{
+  background:#b08d57;
+  color:#fffdf8;
+}
+
+/* ================= SEARCH ================= */
+.search-row{
+  margin-bottom:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+}
+
+.search-row input{
+  max-width:320px;
+}
+
+.product-count{
+  color:#a89a7d;
+  font-size:12px;
+  letter-spacing:0.5px;
+  font-family:'Segoe UI', Arial, sans-serif;
+  white-space:nowrap;
+}
+
+/* ================= TABLE ================= */
+.table-wrap{
+  background:#ffffff;
+  border-top:2px solid #d9c9a3;
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  background:transparent;
+  border-collapse:collapse;
+  margin-top:0;
+  font-family:'Segoe UI', Arial, sans-serif;
+}
+
+th,td{
+  padding:14px 16px;
+  border-bottom:1px solid #ece2cc;
+  text-align:left;
+}
+
+th{
+  color:#a89a7d;
+  font-weight:400;
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+}
+
+td{
+  color:#4a4133;
+  font-size:13.5px;
+}
+
+tbody tr:hover td{
+  background:#faf5ea;
+}
+
+td.low-stock{
+  color:#c2823f;
+}
+
+td.out-stock{
+  color:#c25f4f;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+}
+
+.actions button{
+  margin-right:0;
+  padding:7px 14px;
+  font-size:10.5px;
+}
+
+.actions .edit-btn{
+  border-color:#a89a7d;
+  color:#9c8f78;
+}
+
+.actions .edit-btn:hover{
+  background:#a89a7d;
+  color:#fffdf8;
+}
+
+.actions .delete{
+  border-color:#b06a5a;
+  color:#c98f7f;
+}
+
+.actions .delete:hover{
+  background:#b06a5a;
+  color:#fff;
+}
+
+.empty-row td{
+  text-align:center;
+  color:#a89a7d;
+  padding:36px;
+}
+
+/* QUICK ADJUST */
+.qty-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.qty-actions button{
+  padding:6px 12px;
+  font-size:13px;
+  min-width:36px;
+}
+
+.qty-actions .minus{
+  border-color:#b06a5a;
+  color:#b06a5a;
+}
+
+.qty-actions .minus:hover{
+  background:#b06a5a;
+  color:#fff9f0;
+}
+
+.stock-badge{
+  display:inline-block;
+  padding:3px 10px;
+  font-size:12px;
+  font-family:'Segoe UI', Arial, sans-serif;
+  letter-spacing:0.3px;
+}
+
+.stock-badge.ok{
+  color:#7a9b6e;
+}
+
+.stock-badge.low{
+  color:#c2823f;
+  font-weight:600;
+}
+
+.stock-badge.out{
+  color:#c25f4f;
+  font-weight:600;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width:768px){
+  .sidebar{
+    position:fixed;
+    top:65px;
+    left:0;
+    bottom:0;
+    z-index:95;
+    width:230px;
+    transform:translateX(-100%);
+  }
+  .sidebar:not(.hide){
+    transform:translateX(0);
+  }
+  .sidebar.hide{
+    width:230px;
+    padding:28px 0;
+    transform:translateX(-100%);
+  }
+  #clock{ display:none; }
+  .form-row{
+    grid-template-columns:1fr;
+  }
+  .content{
+    padding:24px 18px;
+  }
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="header-left">
+    <div onclick="toggleSidebar()" style="cursor:pointer;font-size:20px;color:#b08d57;">☰</div>
+    <h3>Stock</h3>
+  </div>
+
+  <div class="header-right">
+    <span id="clock"></span>
+    <span>User: <span id="user" style="color:#b08d57;"></span></span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar hide" id="sidebar">
+
+  <div onclick="go('index')" data-page="index">Dashboard</div>
+  <div onclick="go('products')" data-page="products">Products</div>
+  <div onclick="go('categories')" data-page="categories">Categories</div>
+  <div onclick="go('stock')" data-page="stock">Stock</div>
+  <div onclick="go('reports')" data-page="reports">Reports</div>
+  <div onclick="go('settings')" data-page="settings">Settings</div>
+
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <h2>Stock Management</h2>
+
+  <!-- UPDATE STOCK -->
+  <div class="card">
+    <h3>Update Stock</h3>
+
+    <div class="form-row">
+      <div class="field">
+        <label>Product Name</label>
+        <input id="name" placeholder="Nama produk sedia ada">
+      </div>
+      <div class="field">
+        <label>Adjust Amount (+ / -)</label>
+        <input id="amount" type="number" placeholder="contoh: 10 atau -5">
+      </div>
+      <button onclick="updateStock()">Update</button>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-row">
+    <input class="search" id="search" oninput="render()" placeholder="Cari produk...">
+    <span class="product-count" id="productCount">0 produk</span>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Stock</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody id="list"></tbody>
+    </table>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* LOGIN CHECK */
+if(localStorage.getItem("loggedIn") !== "true"){
+  window.location.href = "login.html";
+}
+
+/* SIDEBAR */
+function toggleSidebar(){
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  sidebar.classList.toggle("hide");
+  overlay.classList.toggle("show", !sidebar.classList.contains("hide") && window.innerWidth <= 768);
+}
+
+function go(page){
+  location.href = page + ".html";
+}
+
+/* MENU AKTIF */
+function setActiveMenu(){
+  const current = (location.pathname.split("/").pop() || "index.html").replace(".html","");
+  document.querySelectorAll(".sidebar div").forEach(item=>{
+    item.classList.toggle("active", item.dataset.page === current);
+  });
+}
+
+/* USER */
+function loadUser(){
+  document.getElementById("user").innerText =
+    localStorage.getItem("username") || "User";
+}
+
+/* LOGOUT */
+function logout(){
+  if(confirm("Adakah anda pasti mahu log keluar?")){
+    localStorage.removeItem("loggedIn");
+    window.location.href = "login.html";
+  }
+}
+
+/* JAM REAL-TIME */
+function updateClock(){
+  const now = new Date();
+  const options = { weekday:'short', day:'2-digit', month:'short', year:'numeric' };
+  const dateStr = now.toLocaleDateString('ms-MY', options);
+  const timeStr = now.toLocaleTimeString('ms-MY', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  document.getElementById("clock").innerText = `${dateStr}, ${timeStr}`;
+}
+
+/* DATA */
+let products = [];
+try{
+  products = JSON.parse(localStorage.getItem("products")) || [];
+}catch(e){
+  console.error("Data produk rosak:", e);
+  products = [];
+}
+
+function save(){
+  localStorage.setItem("products", JSON.stringify(products));
+}
+
+/* UPDATE STOCK (BY NAME) */
+function updateStock(){
+  let name = document.getElementById("name").value.trim().toLowerCase();
+  let amountInput = document.getElementById("amount").value;
+
+  if(!name || amountInput === ""){
+    alert("Sila isi nama produk dan jumlah penyesuaian.");
+    return;
+  }
+
+  let amount = parseInt(amountInput);
+
+  if(isNaN(amount)){
+    alert("Jumlah penyesuaian mesti nombor.");
+    return;
+  }
+
+  let p = products.find(x => x.name.toLowerCase() === name);
+
+  if(!p){
+    alert("Produk tidak dijumpai. Sila semak nama produk.");
+    return;
+  }
+
+  p.stock = (parseInt(p.stock) || 0) + amount;
+  if(p.stock < 0) p.stock = 0;
+
+  save();
+  clearInputs();
+  render();
+}
+
+function clearInputs(){
+  document.getElementById("name").value = "";
+  document.getElementById("amount").value = "";
+}
+
+/* QUICK ADJUST */
+function add(i, val){
+  products[i].stock = (parseInt(products[i].stock) || 0) + val;
+  if(products[i].stock < 0) products[i].stock = 0;
+  save();
+  render();
+}
+
+/* SEARCH + RENDER */
+function render(){
+  let keyword = document.getElementById("search").value?.toLowerCase() || "";
+  let list = document.getElementById("list");
+
+  let filtered = products.filter(p => p.name.toLowerCase().includes(keyword));
+
+  document.getElementById("productCount").innerText = `${filtered.length} produk`;
+
+  if(!filtered.length){
+    list.innerHTML = `<tr class="empty-row"><td colspan="3">Tiada produk dijumpai.</td></tr>`;
+    return;
+  }
+
+  list.innerHTML = filtered
+    .map((p)=>{
+      let i = products.indexOf(p);
+      let stock = parseInt(p.stock) || 0;
+
+      let badgeClass = "ok";
+      if(stock === 0) badgeClass = "out";
+      else if(stock < 5) badgeClass = "low";
+
+      return `
+      <tr>
+        <td>${p.name}</td>
+        <td><span class="stock-badge ${badgeClass}">${stock}</span></td>
+        <td>
+          <div class="qty-actions">
+            <button onclick="add(${i},1)">+1</button>
+            <button class="minus" onclick="add(${i},-1)">-1</button>
+          </div>
+        </td>
+      </tr>
+    `;}).join("");
+}
+
+/* INIT */
+window.onload = function(){
+  loadUser();
+  setActiveMenu();
+  updateClock();
+  setInterval(updateClock, 1000);
+  render();
+};
+
+window.addEventListener("resize", ()=>{
+  if(window.innerWidth > 768){
+    document.getElementById("overlay").classList.remove("show");
+  }
+});
+
+</script>
+
+</body>
+</html>

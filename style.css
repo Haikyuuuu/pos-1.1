@@ -1,0 +1,91 @@
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f3f4f6;
+}
+
+/* HEADER */
+header{
+  background:#111827;
+  color:white;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* LAYOUT */
+.container{
+  display:flex;
+  height:100vh;
+}
+
+/* HAMBURGER */
+.hamburger{
+  cursor:pointer;
+  font-size:22px;
+  margin-right:10px;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;
+  background:#1f2937;
+  color:white;
+  padding:20px;
+  transition:0.3s;
+}
+
+.sidebar.hide{
+  width:0;
+  padding:0;
+  overflow:hidden;
+}
+
+/* MENU */
+.sidebar div{
+  padding:10px;
+  margin:6px 0;
+  background:#374151;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.sidebar div:hover{
+  background:#4b5563;
+}
+
+/* CONTENT */
+.content{
+  flex:1;
+  padding:20px;
+}
+
+/* INPUT */
+input{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+}
+
+/* BUTTON */
+button{
+  padding:10px;
+  background:#111827;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  background:white;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+
+td,th{
+  padding:10px;
+  border-bottom:1px solid #ddd;
+}
